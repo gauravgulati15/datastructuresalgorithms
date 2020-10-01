@@ -1,0 +1,87 @@
+// PRIMS ALGORITHM
+#include<bits/stdc++.h>
+
+using namespace std;
+
+int n , e; // number of nodes and edges in graph
+int ar[10001][10001]; // adjacency matrix of graph
+int weight[10001]; // weight array
+int parent[10001]; // parent array
+bool visited[10001]; // visited array
+int total_weight=0;// cost of MST
+
+void prim()
+{
+    total_weight = 0;
+    // intialisng the weight array with INT_MAX in beginning and visited array with false
+    for(int i=1;i<=n;++i)
+      visited[i] = false , weight[i] = INT_MAX;
+
+    // making node 1 as starting node
+    // so we will make its parent -1 and weight 0 because there its the root
+    weight[1] = 0 , parent[1] = -1;
+
+    // now main algo starts
+    for(int i=1;i<=n ;++i)
+    {
+        int min_vertex = -1;
+        // we will find that vertex which has minimum weight in weight array
+        // and is not visited!!!(important step) because prims is a greedy algorithm
+        for(int j = 1; j<=n ;++j)
+        {
+            // this condition is important 
+            // here min_vertex = -1 condition is written for first case
+            // where there is only node 1 which has zero weight and rest in INT_MAX
+            if(!visited[j] && (min_vertex == -1 || weight[min_vertex]>weight[j]))
+            {
+                min_vertex = j;
+            }
+        }
+
+        if(weight[min_vertex]==INT_MAX) { cout<<"NO MST";  return ;}
+
+        visited[min_vertex] = true;
+        total_weight += weight[min_vertex];
+
+        // now explore the neighbours of min_vertex 
+        for(int j = 1; j<= n ; ++j) 
+        {
+            if(ar[min_vertex][j]!= 0 && !visited[j])
+            {
+                // checking if current weight can be reduced or not
+                if(weight[j]>ar[min_vertex][j])
+                {
+                    weight[j] = ar[min_vertex][j];
+                    parent[j] = min_vertex;
+                }
+            }
+        }
+    }
+}
+
+int main()
+{
+    int from,to, wt;
+    memset(ar,0,sizeof(ar));
+    cout<<"Enter the number of elements and edges of graph:";
+    cin>>n>>e;
+    cout<<"\nEnter the elements of graph with edge weights:\n";
+    for(int i=1;i<=e;++i)
+    {
+        cin>>from>>to>>wt;
+        ar[from][to] = wt;
+        ar[to][from] = wt;
+    }
+
+    prim();
+
+    cout<<"\nMinimum Spanning Tree of cost "<<total_weight<<" is :\n";
+    for(int i=1;i<=n;++i)
+    {
+        cout<<parent[i]<<" -> "<<i<<" weight is : "<<weight[i]<<endl;
+        // cout<<weight[i]<<" ";
+    }
+
+    return 0;
+
+}
