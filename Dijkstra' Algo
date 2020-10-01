@@ -1,0 +1,56 @@
+// IMPLEMENTATION OF  DIJKSTRA'S ALGORITHM
+#include<bits/stdc++.h>
+
+using namespace std;
+
+vector<pair<int,int>> adj[10001];
+
+int main()
+{
+    int n, m, a, b, w;
+    cout<<"Enter the number of nodes and number of edges: ";
+    cin>>n>>m;
+
+    cout<<"\nEnter the elements of graph: \n";
+    while(m--)
+    {
+        cin>>a>>b>>w;
+        adj[a].push_back({b,w});
+        adj[b].push_back({a,w});
+    }
+    // min priority queue
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+
+    vector<int> dist(n+1,100001) , parent(n+1, -1);
+    // distance,source node 
+    pq.push({0,1}) ;
+    dist[1] = 0;
+
+    while(!pq.empty())
+    {
+        int curr = pq.top().second;
+        int curr_d = pq.top().first;
+        pq.pop();
+
+        //optimizing condition
+        if(dist[curr]< curr_d) continue;
+
+        for(pair<int, int> edge : adj[curr])
+        {
+            if(curr_d + edge.second < dist[edge.first])
+            {
+                dist[edge.first] = curr_d + edge.second;
+                parent[edge.first] = curr;
+                pq.push({ dist[edge.first] , edge.first});
+            }
+        }
+    }
+
+    cout<<"\nShortest path from source node:\n";
+    for(int i=1;i<=n;++i)
+    {
+        cout<<i<<" <- "<<parent[i]<<" = "<<dist[i]<<endl;
+    }
+
+    return 0;
+}
